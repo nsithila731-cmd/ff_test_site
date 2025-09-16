@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeTypeEarn - Earn Money by Typing Code</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --gray: #adb5bd;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0f2d, #1d2671);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--light);
+        }
+        
+        .logo i {
+            color: var(--accent);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .balance {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--warning);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .code-display {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .code-input {
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px;
+            color: var(--light);
+            font-family: 'Courier New', monospace;
+            resize: none;
+            margin-bottom: 15px;
+        }
+        
+        .code-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            color: var(--gray);
+        }
+        
+        .history-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-date {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .history-amount {
+            color: var(--warning);
+            font-weight: 600;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1d2671, #0c0f2d);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--success);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--light);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .withdraw-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+        
+        .option-card.active {
+            background: var(--primary);
+            border: 2px solid var(--success);
+        }
+        
+        .option-card i {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: var(--warning);
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--success);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1001;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .withdraw-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                <span>CodeTypeEarn</span>
+            </div>
+            <div class="user-info">
+                <div class="balance">$<span id="totalBalance">0.00</span></div>
+                <button class="btn btn-primary" id="withdrawBtn">Withdraw</button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-keyboard"></i> Type the Code</h2>
+                <div class="code-display" id="codeToType">
+                    function calculateEarnings() {
+  const baseRate = 0.12;
+  const bonus = Math.random() * 0.05;
+  return (baseRate + bonus).toFixed(2);
+}
+                </div>
+                <textarea class="code-input" id="codeInput" placeholder="Start typing the code here..." autofocus></textarea>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="submitCode">Submit Code</button>
+                    <button class="btn btn-success" id="newCode">New Code</button>
+                </div>
+                <div class="stats">
+                    <div>Last earned: $<span id="lastEarned">0.00</span></div>
+                    <div>Completed: <span id="completedTasks">0</span></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-history"></i> Earnings History</h2>
+                <div class="history-container" id="historyContainer">
+                    <div class="history-item">
+                        <div class="history-details">
+                            <div class="history-task">Code typing completed</div>
+                            <div class="history-date">Just now</div>
+                        </div>
+                        <div class="history-amount">+ $0.00</div>
+                    </div>
+                    <!-- More history items will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Withdraw Modal -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2 class="modal-title">Withdraw Earnings</h2>
+            
+            <div class="withdraw-options">
+                <div class="option-card active" data-method="bank">
+                    <i class="fas fa-university"></i>
+                    <div>Bank Transfer</div>
+                </div>
+                <div class="option-card" data-method="card">
+                    <i class="fas fa-credit-card"></i>
+                    <div>Card Payment</div>
+                </div>
+                <div class="option-card" data-method="paypal">
+                    <i class="fab fa-paypal"></i>
+                    <div>PayPal</div>
+                </div>
+                <div class="option-card" data-method="crypto">
+                    <i class="fab fa-bitcoin"></i>
+                    <div>Cryptocurrency</div>
+                </div>
+            </div>
+            
+            <div id="bankForm">
+                <div class="form-group">
+                    <label for="bankName">Bank Name</label>
+                    <input type="text" class="form-control" id="bankName" placeholder="Enter bank name">
+                </div>
+                <div class="form-group">
+                    <label for="bankBranch">Bank Branch</label>
+                    <input type="text" class="form-control" id="bankBranch" placeholder="Enter branch name">
+                </div>
+                <div class="form-group">
+                    <label for="accountNumber">Account Number</label>
+                    <input type="text" class="form-control" id="accountNumber" placeholder="Enter account number">
+                </div>
+            </div>
+            
+            <div id="cardForm" style="display: none;">
+                <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" class="form-control" id="cardNumber" placeholder="Enter card number">
+                </div>
+                <div class="form-group">
+                    <label for="cardHolder">Card Holder Name</label>
+                    <input type="text" class="form-control" id="cardHolder" placeholder="Enter cardholder name">
+                </div>
+                <div class="form-group">
+                    <label for="expiryDate">Expiry Date</label>
+                    <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY">
+                </div>
+                <div class="form-group">
+                    <label for="cvv">CVV</label>
+                    <input type="text" class="form-control" id="cvv" placeholder="Enter CVV">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="withdrawAmount">Amount to Withdraw ($)</label>
+                <input type="number" class="form-control" id="withdrawAmount" placeholder="Enter amount">
+            </div>
+            
+            <button class="btn btn-success" style="width: 100%;">Process Withdrawal</button>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> <span id="notificationText"></span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const codeInput = document.getElementById('codeInput');
+        const codeToType = document.getElementById('codeToType');
+        const submitCodeBtn = document.getElementById('submitCode');
+        const newCodeBtn = document.getElementById('newCode');
+        const totalBalanceEl = document.getElementById('totalBalance');
+        const lastEarnedEl = document.getElementById('lastEarned');
+        const completedTasksEl = document.getElementById('completedTasks');
+        const historyContainer = document.getElementById('historyContainer');
+        const withdrawBtn = document.getElementById('withdrawBtn');
+        const withdrawModal = document.getElementById('withdrawModal');
+        const closeModal = document.getElementById('closeModal');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        const optionCards = document.querySelectorAll('.option-card');
+        
+        // State
+        let totalBalance = 0;
+        let completedTasks = 0;
+        let lastEarned = 0;
+        
+        // Code snippets for typing
+        const codeSnippets = [
+            `function calculateSum(a, b) {\n  return a + b;\n}`,
+            `const user = {\n  name: 'John',\n  age: 30,\n  city: 'New York'\n};`,
+            `for(let i = 0; i < 10; i++) {\n  console.log('Number ' + i);\n}`,
+            `class Calculator {\n  add(a, b) {\n    return a + b;\n  }\n}`,
+            `const numbers = [1, 2, 3, 4, 5];\nconst squared = numbers.map(n => n * n);`,
+            `const fetchData = async () => {\n  const response = await fetch('api/data');\n  return response.json();\n}`
+        ];
+        
+        // Initialize with a random code snippet
+        function setRandomCode() {
+            const randomIndex = Math.floor(Math.random() * codeSnippets.length);
+            codeToType.textContent = codeSnippets[randomIndex];
+            codeInput.value = '';
+        }
+        
+        // Check if the typed code matches the target code
+        function checkCode() {
+            const targetCode = codeToType.textContent.trim();
+            const typedCode = codeInput.value.trim();
+            
+            if (typedCode === targetCode) {
+                // Generate a random amount between $0.10 and $0.15
+                const earnedAmount = (Math.random() * 0.05 + 0.10).toFixed(2);
+                lastEarned = parseFloat(earnedAmount);
+                totalBalance += lastEarned;
+                completedTasks++;
+                
+                // Update UI
+                totalBalanceEl.textContent = totalBalance.toFixed(2);
+                lastEarnedEl.textContent = earnedAmount;
+                completedTasksEl.textContent = completedTasks;
+                
+                // Add to history
+                addToHistory(earnedAmount);
+                
+                // Show notification
+                showNotification(`Congratulations! You earned $${earnedAmount}`);
+                
+                // Generate new code
+                setRandomCode();
+            } else {
+                showNotification("Code doesn't match. Please try again.", "error");
+            }
+        }
+        
+        // Add earning to history
+        function addToHistory(amount) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const dateString = now.toLocaleDateString();
+            
+            const historyItem = document.createElement('div');
+            historyItem.classList.add('history-item');
+            historyItem.innerHTML = `
+                <div class="history-details">
+                    <div class="history-task">Code typing completed</div>
+                    <div class="history-date">${timeString} · ${dateString}</div>
+                </div>
+                <div class="history-amount">+ $${amount}</div>
+            `;
+            
+            historyContainer.prepend(historyItem);
+        }
+        
+        // Show notification
+        function showNotification(message, type = "success") {
+            notification.style.background = type === "success" ? "var(--success)" : "var(--danger)";
+            notificationText.textContent = message;
+            notification.style.display = "block";
+            
+            setTimeout(() => {
+                notification.style.display = "none";
+            }, 3000);
+        }
+        
+        // Event Listeners
+        submitCodeBtn.addEventListener('click', checkCode);
+        
+        newCodeBtn.addEventListener('click', setRandomCode);
+        
+        withdrawBtn.addEventListener('click', () => {
+            withdrawModal.style.display = "flex";
+        });
+        
+        closeModal.addEventListener('click', () => {
+            withdrawModal.style.display = "none";
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === withdrawModal) {
+                withdrawModal.style.display = "none";
+            }
+        });
+        
+        optionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                optionCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                
+                // Show the appropriate form
+                const method = card.getAttribute('data-method');
+                document.getElementById('bankForm').style.display = method === 'bank' ? 'block' : 'none';
+                document.getElementById('cardForm').style.display = method === 'card' ? 'block' : 'none';
+            });
+        });
+        
+        // Initialize
+        setRandomCode();
+    </script>
+</body>
+</html>
